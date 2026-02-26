@@ -97,6 +97,7 @@ function getMigrationSteps() {
 
 const PROCESSED_REQUESTS = new Map();
 const DISPLAYABLE_IMAGE_CACHE = new Map();
+const HOTBAR_MACRO_ENSURE_QUEUES = new Map();
 
 function t(key, fallback, data = null) {
   const localized = data
@@ -112,6 +113,27 @@ function escapeHtml(value) {
   return raw.replace(/[&<>"']/g, chr => (
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" }[chr] || chr)
   ));
+}
+
+function queueHotbarMacroEnsureTask(queueKey, task) {
+  const key = String(queueKey || "").trim();
+  if (!key || typeof task !== "function") {
+    return Promise.resolve(typeof task === "function" ? task() : null);
+  }
+
+  const previous = HOTBAR_MACRO_ENSURE_QUEUES.get(key) || Promise.resolve();
+  let tracked = null;
+  tracked = previous
+    .catch(() => null)
+    .then(task)
+    .finally(() => {
+      if (HOTBAR_MACRO_ENSURE_QUEUES.get(key) === tracked) {
+        HOTBAR_MACRO_ENSURE_QUEUES.delete(key);
+      }
+    });
+
+  HOTBAR_MACRO_ENSURE_QUEUES.set(key, tracked);
+  return tracked;
 }
 
 function rememberRequest(requestId) {
@@ -857,6 +879,18 @@ async function ensureNotesHotbarMacro(options = {}) {
   }
 }
 
+function scheduleEnsureGmHotbarMacro(options = {}) {
+  return queueHotbarMacroEnsureTask("gm", () => ensureGmHotbarMacro(options));
+}
+
+function scheduleEnsureTileVisibilityHotbarMacro(options = {}) {
+  return queueHotbarMacroEnsureTask("tile", () => ensureTileVisibilityHotbarMacro(options));
+}
+
+function scheduleEnsureNotesHotbarMacro(options = {}) {
+  return queueHotbarMacroEnsureTask("notes", () => ensureNotesHotbarMacro(options));
+}
+
 
 function getRenderedChatMessageRoot(html) {
   if (!html) return null;
@@ -887,7 +921,7 @@ function registerModuleSettings() {
     default: true,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureGmHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureGmHotbarMacro({ forceTargetSlot: true });
     }
   });
 
@@ -900,7 +934,7 @@ function registerModuleSettings() {
     default: GM_MACRO_SLOT_DEFAULT,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureGmHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureGmHotbarMacro({ forceTargetSlot: true });
     }
   });
 
@@ -913,7 +947,7 @@ function registerModuleSettings() {
     default: true,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureTileVisibilityHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureTileVisibilityHotbarMacro({ forceTargetSlot: true });
     }
   });
 
@@ -926,7 +960,7 @@ function registerModuleSettings() {
     default: TILE_MACRO_SLOT_DEFAULT,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureTileVisibilityHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureTileVisibilityHotbarMacro({ forceTargetSlot: true });
     }
   });
 
@@ -939,7 +973,7 @@ function registerModuleSettings() {
     default: true,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureNotesHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureNotesHotbarMacro({ forceTargetSlot: true });
     }
   });
 
@@ -952,7 +986,7 @@ function registerModuleSettings() {
     default: NOTES_MACRO_SLOT_DEFAULT,
     onChange: async () => {
       if (!game.ready || !game.user?.isGM) return;
-      await ensureNotesHotbarMacro({ forceTargetSlot: true });
+      await scheduleEnsureNotesHotbarMacro({ forceTargetSlot: true });
     }
   });
 }
@@ -983,9 +1017,9 @@ Hooks.once("ready", async () => {
     console.error(`[${MODULE_ID}] migration failed`, error);
     ui.notifications?.error("Migration Bloodman interrompue. Consultez la console.");
   }
-  await ensureGmHotbarMacro();
-  await ensureTileVisibilityHotbarMacro();
-  await ensureNotesHotbarMacro();
+  await scheduleEnsureGmHotbarMacro();
+  await scheduleEnsureTileVisibilityHotbarMacro();
+  await scheduleEnsureNotesHotbarMacro();
 });
 
 Hooks.on("renderChatMessage", (message, html) => {
