@@ -1,0 +1,130 @@
+{
+  "BJD": {
+    "Chat": {
+      "Title": "Automate de voyance",
+      "ResultLabel": "Resultat",
+      "Success": "oui",
+      "Failure": "non",
+      "RollLabel": "Jet",
+      "TotalLabel": "Total",
+      "ThresholdLabel": "Seuil"
+    },
+    "Settings": {
+      "EnableGmMacro": {
+        "Name": "Activer la macro automatique du destin",
+        "Hint": "Cree ou met a jour automatiquement la macro de jet du destin et l'assigne a la hotbar du GM."
+      },
+      "GmMacroSlot": {
+        "Name": "Slot hotbar de la macro GM",
+        "Hint": "Choisir le slot de hotbar (1 a 50) pour la macro de jet du destin."
+      },
+      "EnableTileMacro": {
+        "Name": "Activer la macro de visibilite des tuiles",
+        "Hint": "Cree ou met a jour automatiquement la macro de toggle des tuiles et l'assigne a la hotbar du GM."
+      },
+      "TileMacroSlot": {
+        "Name": "Slot hotbar macro tuiles",
+        "Hint": "Choisir le slot de hotbar (1 a 50) pour la macro de toggle des tuiles."
+      },
+      "EnableNotesMacro": {
+        "Name": "Activer la macro automatique des notes",
+        "Hint": "Cree ou met a jour automatiquement la macro de notes et l'assigne a la hotbar du GM."
+      },
+      "NotesMacroSlot": {
+        "Name": "Slot hotbar macro notes",
+        "Hint": "Choisir le slot de hotbar (1 a 50) pour la macro de notes."
+      },
+      "TokenResize": {
+        "Name": "Redimensionnement de token",
+        "Hint": "Le portrait conserve le Finder natif. Utilisez le bouton Token sur la fiche pour cadrer et generer le PNG de token."
+      },
+      "SheetImageShare": {
+        "Name": "Activer Montrer l'image (clic droit)",
+        "Hint": "Ajoute l'option Montrer l'image sur toutes les images Foundry, avec ciblage des joueurs."
+      }
+    },
+    "TokenResize": {
+      "Title": "Redimensionnement de token",
+      "Close": "Fermer",
+      "OpenEditor": "Token",
+      "DragHint": "Glisser l'image source; le cercle indique la zone visible du token.",
+      "ScaleX": "Echelle X",
+      "ScaleY": "Echelle Y",
+      "OffsetX": "Decalage X",
+      "OffsetY": "Decalage Y",
+      "LockScale": "Lier X et Y",
+      "Reset": "Reinitialiser",
+      "Cancel": "Annuler",
+      "Apply": "Appliquer"
+    },
+    "SheetImageShare": {
+      "Title": "Montrer l'image",
+      "Prompt": "Choisissez les joueurs qui verront cette image.",
+      "ContextAction": "Montrer l'image",
+      "ModeAll": "Tous les joueurs",
+      "ModeSelected": "Joueurs selectionnes",
+      "PlayersLabel": "Joueurs cibles",
+      "SelectAtLeastOne": "Selectionnez au moins un joueur.",
+      "NoPlayers": "Aucun joueur actif disponible pour recevoir l'image.",
+      "ShowToPlayers": "Montrer l'image",
+      "Cancel": "Annuler"
+    },
+    "Notify": {
+      "SocketUnavailable": "Socket Foundry indisponible: diffusion globale non effectuee.",
+      "RollFailed": "Impossible de lancer le jet du destin.",
+      "GMOnly": "Seul un GM peut modifier la visibilite de toutes les tuiles.",
+      "GMOnlyNotes": "Seul un GM peut ouvrir la fenetre des notes.",
+      "NoActiveScene": "Aucune scene active trouvee.",
+      "TilesShown": "Toutes les tuiles de la scene sont maintenant visibles.",
+      "TilesHidden": "Toutes les tuiles de la scene sont maintenant cachees.",
+      "NotesSheetUnavailable": "Aucune feuille de notes disponible.",
+      "NotesOpenFailed": "Impossible d'ouvrir la fenetre de notes."
+    }
+  },
+  "SMLTME.Time_Format": "Format de l'heure",
+  "SMLTME.12hr": "12h",
+  "SMLTME.24hr": "24h",
+  "SMLTME.Show_Seconds": "Afficher les secondes",
+  "SMLTME.Date_Format": "Format de la date",
+  "SMLTME.Calendar_Provider": "Source du calendrier",
+  "SMLTME.Calendar_Provider_Hint": "Source des informations de calendrier du monde.",
+  "SMLTME.Small_Step": "Pas court",
+  "SMLTME.Small_Step_Hint": "Minutes ajoutees/retirees avec les boutons < et >. Maj double, Alt divise par deux.",
+  "SMLTME.Large_Step": "Pas long",
+  "SMLTME.Large_Step_Hint": "Minutes ajoutees/retirees avec les boutons << et >>. Maj double, Alt divise par deux.",
+  "SMLTME.Resting_Opacity": "Opacite au repos",
+  "SMLTME.Resting_Opacity_Hint": "Opacite de l'horloge hors interaction.",
+  "SMLTME.Darkness_Default": "Affecter l'obscurite par defaut",
+  "SMLTME.Darkness_Default_Hint": "Valeur par defaut du lien obscurite/heure pour les nouvelles scenes.",
+  "SMLTME.Darkness_Control": "Controle de l'obscurite",
+  "SMLTME.Darkness_Control_Hint": "Lie l'obscurite de la scene a l'heure actuelle.",
+  "SMLTME.Darkness_Config": "Configuration obscurite",
+  "SMLTME.Darkness_Config_Hint": "Deplacez soleil/lune pour definir lever/coucher et niveaux d'obscurite.",
+  "SMLTME.Hide_From_Players": "Cacher aux joueurs",
+  "SMLTME.Hide_From_Players_Hint": "Cache l'horloge pour les non-GM.",
+  "SMLTME.Allow_Trusted": "Autoriser les joueurs de confiance",
+  "SMLTME.Allow_Trusted_Hint": "Permet aux joueurs de confiance de modifier l'heure.",
+  "SMLTME.Player_Visibility": "Visibilite des joueurs",
+  "SMLTME.Player_Visibility_Hint": "Choisissez les elements de l'horloge visibles pour les joueurs.",
+  "SMLTME.Player_Visibility_Default": "Visibilite joueur par defaut",
+  "SMLTME.Player_Visibility_Default_Hint": "Niveau par defaut pour les nouvelles scenes.",
+  "SMLTME.Player_Vis_0": "Aucun",
+  "SMLTME.Player_Vis_1": "Position soleil/lune uniquement",
+  "SMLTME.Player_Vis_2": "Position soleil/lune et heure",
+  "SMLTME.Darkness_Reset": "Maj-clic: reinitialiser les heures par defaut",
+  "SMLTME.Position_Reset": "Maj-clic: reinitialiser la position de l'horloge",
+  "SMLTME.Sun_Sync": "Synchroniser lever/coucher",
+  "SMLTME.Sun_Sync_Hint": "Recupere lever/coucher depuis Simple Calendar.",
+  "SMLTME.Threshold_Override_Tooltip": "L'horloge ajuste ce niveau selon la phase de la lune",
+  "SMLTME.Moonlight_Adjust": "Ajustement lumiere lunaire",
+  "SMLTME.Moonlight_Adjust_Hint": "Ajuste l'illumination globale selon la phase lunaire.",
+  "SMLTME.Moon_Tint": "Teinter l'obscurite avec la couleur de la lune",
+  "SMLTME.Moon_Tint_Hint": "Teinte l'obscurite selon la premiere lune disponible de Simple Calendar.",
+  "SMLTME.Phase_Impact": "Impact de phase",
+  "SMLTME.Phase_Impact_Hint": "Intensite de l'impact de la phase lunaire sur l'obscurite.",
+  "SMLTME.Moon_Darkness": "La phase lunaire affecte l'obscurite",
+  "SMLTME.Moon_Darkness_Hint": "Adapte l'obscurite maximale selon la phase lunaire.",
+  "SMLTME.Toggle_Hotkey": "Basculer l'horloge",
+  "SMLTME.Toggle_Hotkey_Hint": "Affiche ou masque la fenetre de l'horloge."
+}
+

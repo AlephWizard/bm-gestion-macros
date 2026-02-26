@@ -1,0 +1,143 @@
+﻿.bjd-voyance-chat-card {
+  border: 1px solid #05070d;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #070a12;
+  box-shadow: 0 14px 32px rgba(4, 7, 12, 0.34);
+  margin: 0;
+}
+
+.bjd-voyance-chat-card-media {
+  position: relative;
+  min-height: 176px;
+  isolation: isolate;
+}
+
+.bjd-voyance-chat-card-bg-fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 34% 22%, rgba(243, 228, 158, 0.3), rgba(67, 26, 94, 0.48) 58%),
+    radial-gradient(circle at 73% 73%, rgba(79, 161, 255, 0.26), rgba(15, 19, 31, 0.92));
+}
+
+.bjd-voyance-chat-card-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.bjd-voyance-chat-card-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 10, 16, 0.2), rgba(8, 10, 16, 0.7)),
+    linear-gradient(0deg, rgba(8, 10, 16, 0.8), rgba(8, 10, 16, 0.24));
+}
+
+.bjd-voyance-chat-card-body {
+  position: relative;
+  z-index: 2;
+  padding: 14px;
+  color: #f5f7fb;
+}
+
+.bjd-voyance-chat-card-title,
+.bjd-voyance-chat-card-result-label,
+.bjd-voyance-chat-card-result-value {
+  margin: 0;
+}
+
+.bjd-voyance-chat-card-title {
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(228, 236, 255, 0.86);
+}
+
+.bjd-voyance-chat-card-result-label {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(228, 236, 255, 0.82);
+}
+
+.bjd-voyance-chat-card-result-value {
+  margin-top: 3px;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bjd-voyance-chat-card.is-success .bjd-voyance-chat-card-result-value {
+  color: #9de4a7;
+  text-shadow: 0 0 12px rgba(95, 199, 118, 0.45);
+}
+
+.bjd-voyance-chat-card.is-failure .bjd-voyance-chat-card-result-value {
+  color: #ff9f93;
+  text-shadow: 0 0 12px rgba(255, 112, 112, 0.45);
+}
+
+.bjd-voyance-chat-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(138, 160, 200, 0.2);
+  background: rgba(9, 12, 19, 0.92);
+}
+
+.bjd-voyance-chat-card-meta-item {
+  font-size: 0.78rem;
+  color: rgba(225, 233, 248, 0.94);
+}
+
+#chat-log .chat-message.bjd-voyance-chat-message,
+#chat-log .message.bjd-voyance-chat-message {
+  border: 1px solid #000;
+  background: #05070d;
+  color: #e7ecf7;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.38);
+}
+
+#chat-log .chat-message.bjd-voyance-chat-message .message-header,
+#chat-log .message.bjd-voyance-chat-message .message-header {
+  color: #d8deeb;
+}
+
+#chat-log .chat-message.bjd-voyance-chat-message .message-sender,
+#chat-log .chat-message.bjd-voyance-chat-message .message-metadata,
+#chat-log .message.bjd-voyance-chat-message .message-sender,
+#chat-log .message.bjd-voyance-chat-message .message-metadata {
+  color: #d8deeb;
+}
+
+#chat-log .chat-message.bjd-voyance-chat-message .message-content,
+#chat-log .message.bjd-voyance-chat-message .message-content {
+  margin-top: 6px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+#chat-log .chat-message.bjd-voyance-chat-message .dice-roll,
+#chat-log .message.bjd-voyance-chat-message .dice-roll {
+  margin-top: 8px;
+  color: #e7ecf7;
+}
+
+@media (max-width: 560px) {
+  .bjd-voyance-chat-card-media {
+    min-height: 146px;
+  }
+}
+

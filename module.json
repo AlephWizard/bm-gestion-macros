@@ -1,0 +1,40 @@
+{
+  "id": "bm-gestion-macros",
+  "title": "bm-gestion-macros",
+  "description": "Module Foundry dedie aux macros Bloodman (destin, tuiles, notes).",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "AbelGuillouet&Codex"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/destin.css"
+  ],
+  "languages": [
+    {
+      "lang": "fr",
+      "name": "Francais",
+      "path": "lang/fr.json"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "bloodman",
+        "type": "system",
+        "compatibility": {
+          "minimum": "0.13.0",
+          "verified": "0.13.0"
+        }
+      }
+    ]
+  }
+}
