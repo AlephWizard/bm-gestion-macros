@@ -1,7 +1,7 @@
 {
   "id": "bm-gestion-macros",
   "title": "bm-gestion-macros",
-  "description": "Module Foundry dedie aux macros Bloodman (destin, tuiles, notes).",
+  "description": "Module Foundry dedie aux macros Bloodman (destin, tuiles).",
   "version": "1.0.0",
   "compatibility": {
     "minimum": "13",

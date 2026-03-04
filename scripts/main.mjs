@@ -18,18 +18,8 @@ const TILE_MACRO_FLAG = "autoTileVisibilityMacro";
 const TILE_VISIBILITY_STATE_FLAG = "tileVisibilityHiddenState";
 const SETTING_ENABLE_TILE_MACRO = "enableTileVisibilityMacro";
 const SETTING_TILE_MACRO_SLOT = "tileVisibilityMacroSlot";
-const NOTES_MACRO_NAME = "Bloodman - Notes GM";
-const NOTES_MACRO_ICON = `modules/${MODULE_ID}/images/icon_notes.jpg`;
-const NOTES_MACRO_FLAG = "autoNotesMacro";
-const SETTING_ENABLE_NOTES_MACRO = "enableNotesHotbarMacro";
-const SETTING_NOTES_MACRO_SLOT = "notesHotbarMacroSlot";
 const SETTING_SCHEMA_VERSION = "schemaVersion";
-const NOTES_JOURNAL_FLAG = "gmNotesJournal";
-const NOTES_JOURNAL_PAGE_FLAG = "gmNotesJournalPage";
-const NOTES_JOURNAL_NAME = "Bloodman - Notes GM";
-const NOTES_JOURNAL_PAGE_NAME = "Notes";
 const TILE_MACRO_SLOT_DEFAULT = 2;
-const NOTES_MACRO_SLOT_DEFAULT = 3;
 const IMAGE_DISPLAY_RETRY_DELAYS = Object.freeze([0, 120, 260]);
 const IMAGE_DISPLAY_CACHE_TTL_MS = 5 * 60 * 1000;
 const IMAGE_DISPLAY_CACHE_MAX = 512;
@@ -44,12 +34,6 @@ if (!api || typeof api.toggleCurrentSceneTilesVisibility !== "function") {
   ui.notifications?.warn("Module ${MODULE_ID} inactif ou API indisponible.");
 } else {
   await api.toggleCurrentSceneTilesVisibility();
-}`;
-const NOTES_MACRO_COMMAND = `const api = game.modules.get("${MODULE_ID}")?.api;
-if (!api || typeof api.openGmNotesWindow !== "function") {
-  ui.notifications?.warn("Module ${MODULE_ID} inactif ou API indisponible.");
-} else {
-  await api.openGmNotesWindow();
 }`;
 function getModuleTargetVersion() {
   const module = game.modules?.get?.(MODULE_ID);
@@ -78,11 +62,6 @@ function getMigrationSteps() {
         const tileSlot = clampSlotMigrationValue(getSetting(SETTING_TILE_MACRO_SLOT), TILE_MACRO_SLOT_DEFAULT);
         if (tileSlot !== Number(getSetting(SETTING_TILE_MACRO_SLOT))) {
           updates.push({ key: SETTING_TILE_MACRO_SLOT, value: tileSlot });
-        }
-
-        const notesSlot = clampSlotMigrationValue(getSetting(SETTING_NOTES_MACRO_SLOT), NOTES_MACRO_SLOT_DEFAULT);
-        if (notesSlot !== Number(getSetting(SETTING_NOTES_MACRO_SLOT))) {
-          updates.push({ key: SETTING_NOTES_MACRO_SLOT, value: notesSlot });
         }
 
         for (const update of updates) {
@@ -421,130 +400,6 @@ async function toggleCurrentSceneTilesVisibility() {
   };
 }
 
-function getJournalHtmlFormatValue() {
-  const htmlFormat = Number(CONST?.JOURNAL_ENTRY_PAGE_FORMATS?.HTML);
-  return Number.isFinite(htmlFormat) ? htmlFormat : 1;
-}
-
-function findManagedGmNotesJournal() {
-  const journals = game.journal?.contents || [];
-  const byFlag = journals.find(entry => entry.getFlag(MODULE_ID, NOTES_JOURNAL_FLAG) === true);
-  if (byFlag) return byFlag;
-  return journals.find(entry => entry?.name === NOTES_JOURNAL_NAME) || null;
-}
-
-function findManagedGmNotesPage(journal) {
-  const pages = journal?.pages?.contents || [];
-  const byFlag = pages.find(page => page.getFlag?.(MODULE_ID, NOTES_JOURNAL_PAGE_FLAG) === true);
-  if (byFlag) return byFlag;
-  const byName = pages.find(page => page?.type === "text" && page?.name === NOTES_JOURNAL_PAGE_NAME);
-  if (byName) return byName;
-  return pages.find(page => page?.type === "text") || null;
-}
-
-async function ensureGmNotesJournal() {
-  const htmlFormat = getJournalHtmlFormatValue();
-  let journal = findManagedGmNotesJournal();
-
-  if (journal) {
-    if (journal.name !== NOTES_JOURNAL_NAME) {
-      journal = await journal.update({ name: NOTES_JOURNAL_NAME });
-    }
-    if (journal.getFlag(MODULE_ID, NOTES_JOURNAL_FLAG) !== true) {
-      await journal.setFlag(MODULE_ID, NOTES_JOURNAL_FLAG, true);
-    }
-  } else {
-    journal = await JournalEntry.create({
-      name: NOTES_JOURNAL_NAME,
-      pages: [{
-        name: NOTES_JOURNAL_PAGE_NAME,
-        type: "text",
-        text: {
-          content: "",
-          format: htmlFormat
-        },
-        flags: {
-          [MODULE_ID]: {
-            [NOTES_JOURNAL_PAGE_FLAG]: true
-          }
-        }
-      }],
-      flags: {
-        [MODULE_ID]: {
-          [NOTES_JOURNAL_FLAG]: true
-        }
-      }
-    });
-  }
-
-  let page = findManagedGmNotesPage(journal);
-  if (!page) {
-    const createdPages = await journal.createEmbeddedDocuments("JournalEntryPage", [{
-      name: NOTES_JOURNAL_PAGE_NAME,
-      type: "text",
-      text: {
-        content: "",
-        format: htmlFormat
-      },
-      flags: {
-        [MODULE_ID]: {
-          [NOTES_JOURNAL_PAGE_FLAG]: true
-        }
-      }
-    }]);
-    page = createdPages?.[0] || null;
-  } else {
-    const updates = {};
-    if (page.name !== NOTES_JOURNAL_PAGE_NAME) updates.name = NOTES_JOURNAL_PAGE_NAME;
-    const currentFormat = Number(page.text?.format);
-    if (!Number.isFinite(currentFormat)) updates["text.format"] = htmlFormat;
-    if (Object.keys(updates).length > 0) {
-      page = await page.update(updates);
-    }
-    if (page?.getFlag?.(MODULE_ID, NOTES_JOURNAL_PAGE_FLAG) !== true) {
-      await page.setFlag(MODULE_ID, NOTES_JOURNAL_PAGE_FLAG, true);
-    }
-  }
-
-  return { journal, page };
-}
-
-async function openGmNotesWindow() {
-  if (!game.user?.isGM) {
-    ui.notifications?.warn(t("BJD.Notify.GMOnlyNotes", "Seul un GM peut ouvrir la fenetre des notes."));
-    return null;
-  }
-
-  try {
-    const { journal, page } = await ensureGmNotesJournal();
-    const baseRenderOptions = {
-      width: 980,
-      height: 760
-    };
-    if (page?.sheet) {
-      page.sheet.render(true, baseRenderOptions);
-    } else if (journal?.sheet) {
-      const renderOptions = page?.id
-        ? { ...baseRenderOptions, pageId: page.id }
-        : baseRenderOptions;
-      journal.sheet.render(true, renderOptions);
-    } else {
-      ui.notifications?.warn(t("BJD.Notify.NotesSheetUnavailable", "Aucune feuille de notes disponible."));
-      return null;
-    }
-
-    return {
-      journalId: String(journal?.id || ""),
-      pageId: String(page?.id || "")
-    };
-  } catch (error) {
-    console.error(`[${MODULE_ID}] failed to open GM notes window`, error);
-    ui.notifications?.error(t("BJD.Notify.NotesOpenFailed", "Impossible d'ouvrir la fenetre de notes."));
-    return null;
-  }
-}
-
-
 function isGmMacroAutomationEnabled() {
   return Boolean(game.settings?.get?.(MODULE_ID, SETTING_ENABLE_GM_MACRO));
 }
@@ -563,17 +418,6 @@ function isTileMacroAutomationEnabled() {
 function getConfiguredTileMacroSlot() {
   const rawValue = Number(game.settings?.get?.(MODULE_ID, SETTING_TILE_MACRO_SLOT));
   if (!Number.isFinite(rawValue)) return TILE_MACRO_SLOT_DEFAULT;
-  const normalized = Math.floor(rawValue);
-  return Math.max(GM_MACRO_SLOT_MIN, Math.min(GM_MACRO_SLOT_MAX, normalized));
-}
-
-function isNotesMacroAutomationEnabled() {
-  return Boolean(game.settings?.get?.(MODULE_ID, SETTING_ENABLE_NOTES_MACRO));
-}
-
-function getConfiguredNotesMacroSlot() {
-  const rawValue = Number(game.settings?.get?.(MODULE_ID, SETTING_NOTES_MACRO_SLOT));
-  if (!Number.isFinite(rawValue)) return NOTES_MACRO_SLOT_DEFAULT;
   const normalized = Math.floor(rawValue);
   return Math.max(GM_MACRO_SLOT_MIN, Math.min(GM_MACRO_SLOT_MAX, normalized));
 }
@@ -716,58 +560,6 @@ async function getOrCreateTileVisibilityMacro() {
   });
 }
 
-async function detachManagedNotesMacroFromHotbar() {
-  const macro = findManagedNotesMacro();
-  const macroId = String(macro?.id || "").trim();
-  if (!macroId) return;
-
-  const slotsToClear = getAssignedMacroSlots(macroId);
-  await clearUserHotbarSlots(slotsToClear);
-}
-
-function findManagedNotesMacro() {
-  const macros = game.macros?.contents || [];
-  const byFlag = macros.find(macro => macro.getFlag(MODULE_ID, NOTES_MACRO_FLAG) === true);
-  if (byFlag) return byFlag;
-
-  return macros.find(macro => (
-    macro?.type === "script"
-    && macro?.name === NOTES_MACRO_NAME
-    && String(macro?.command || "").includes(`game.modules.get("${MODULE_ID}")`)
-    && String(macro?.command || "").includes("openGmNotesWindow")
-  ));
-}
-
-async function getOrCreateNotesMacro() {
-  let macro = findManagedNotesMacro();
-  if (macro) {
-    const updates = {};
-    if (macro.name !== NOTES_MACRO_NAME) updates.name = NOTES_MACRO_NAME;
-    if (macro.command !== NOTES_MACRO_COMMAND) updates.command = NOTES_MACRO_COMMAND;
-    if (macro.img !== NOTES_MACRO_ICON) updates.img = NOTES_MACRO_ICON;
-    if (Object.keys(updates).length > 0) {
-      macro = await macro.update(updates);
-    }
-
-    if (macro.getFlag(MODULE_ID, NOTES_MACRO_FLAG) !== true) {
-      await macro.setFlag(MODULE_ID, NOTES_MACRO_FLAG, true);
-    }
-    return macro;
-  }
-
-  return Macro.create({
-    name: NOTES_MACRO_NAME,
-    type: "script",
-    img: NOTES_MACRO_ICON,
-    command: NOTES_MACRO_COMMAND,
-    flags: {
-      [MODULE_ID]: {
-        [NOTES_MACRO_FLAG]: true
-      }
-    }
-  });
-}
-
 async function ensureGmHotbarMacro(options = {}) {
   if (!game.user?.isGM) return;
   const forceTargetSlot = Boolean(options.forceTargetSlot);
@@ -842,43 +634,6 @@ async function ensureTileVisibilityHotbarMacro(options = {}) {
   }
 }
 
-async function ensureNotesHotbarMacro(options = {}) {
-  if (!game.user?.isGM) return;
-  const forceTargetSlot = Boolean(options.forceTargetSlot);
-
-  try {
-    if (!isNotesMacroAutomationEnabled()) {
-      await detachManagedNotesMacroFromHotbar();
-      return;
-    }
-
-    const macro = await getOrCreateNotesMacro();
-    if (!macro) return;
-
-    const targetSlot = getConfiguredNotesMacroSlot();
-    const macroId = String(macro.id || "").trim();
-    const assignedSlots = getAssignedMacroSlots(macroId);
-
-    if (!forceTargetSlot && assignedSlots.length > 0 && !assignedSlots.includes(targetSlot)) {
-      const currentSlot = assignedSlots[0];
-      if (currentSlot !== targetSlot) {
-        await game.settings.set(MODULE_ID, SETTING_NOTES_MACRO_SLOT, currentSlot);
-      }
-      return;
-    }
-
-    const slotsToClear = assignedSlots.filter(slot => slot !== targetSlot);
-    await clearUserHotbarSlots(slotsToClear);
-
-    const currentSlotMacroId = String(game.user?.hotbar?.[targetSlot] || "").trim();
-    if (currentSlotMacroId === macroId) return;
-
-    await game.user.assignHotbarMacro(macro, targetSlot);
-  } catch (error) {
-    console.error(`[${MODULE_ID}] failed to ensure notes hotbar macro`, error);
-  }
-}
-
 function scheduleEnsureGmHotbarMacro(options = {}) {
   return queueHotbarMacroEnsureTask("gm", () => ensureGmHotbarMacro(options));
 }
@@ -886,11 +641,6 @@ function scheduleEnsureGmHotbarMacro(options = {}) {
 function scheduleEnsureTileVisibilityHotbarMacro(options = {}) {
   return queueHotbarMacroEnsureTask("tile", () => ensureTileVisibilityHotbarMacro(options));
 }
-
-function scheduleEnsureNotesHotbarMacro(options = {}) {
-  return queueHotbarMacroEnsureTask("notes", () => ensureNotesHotbarMacro(options));
-}
-
 
 function getRenderedChatMessageRoot(html) {
   if (!html) return null;
@@ -964,31 +714,6 @@ function registerModuleSettings() {
     }
   });
 
-  game.settings.register(MODULE_ID, SETTING_ENABLE_NOTES_MACRO, {
-    name: t("BJD.Settings.EnableNotesMacro.Name", "Activer la macro automatique des notes"),
-    hint: t("BJD.Settings.EnableNotesMacro.Hint", "Cree ou met a jour automatiquement la macro de notes et l'assigne a la hotbar du GM."),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-    onChange: async () => {
-      if (!game.ready || !game.user?.isGM) return;
-      await scheduleEnsureNotesHotbarMacro({ forceTargetSlot: true });
-    }
-  });
-
-  game.settings.register(MODULE_ID, SETTING_NOTES_MACRO_SLOT, {
-    name: t("BJD.Settings.NotesMacroSlot.Name", "Slot hotbar macro notes"),
-    hint: t("BJD.Settings.NotesMacroSlot.Hint", "Choisir le slot de hotbar (1 a 50) pour la macro de notes."),
-    scope: "world",
-    config: true,
-    type: Number,
-    default: NOTES_MACRO_SLOT_DEFAULT,
-    onChange: async () => {
-      if (!game.ready || !game.user?.isGM) return;
-      await scheduleEnsureNotesHotbarMacro({ forceTargetSlot: true });
-    }
-  });
 }
 
 Hooks.once("init", () => {
@@ -996,8 +721,7 @@ Hooks.once("init", () => {
 
   const api = {
     rollJetDestin,
-    toggleCurrentSceneTilesVisibility,
-    openGmNotesWindow
+    toggleCurrentSceneTilesVisibility
   };
 
   const module = game.modules?.get?.(MODULE_ID);
@@ -1019,7 +743,6 @@ Hooks.once("ready", async () => {
   }
   await scheduleEnsureGmHotbarMacro();
   await scheduleEnsureTileVisibilityHotbarMacro();
-  await scheduleEnsureNotesHotbarMacro();
 });
 
 Hooks.on("renderChatMessage", (message, html) => {
@@ -1040,6 +763,5 @@ Hooks.on("renderChatMessage", (message, html) => {
 
 export {
   rollJetDestin,
-  toggleCurrentSceneTilesVisibility,
-  openGmNotesWindow
+  toggleCurrentSceneTilesVisibility
 };

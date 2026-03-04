@@ -26,14 +26,6 @@
         "Name": "Slot hotbar macro tuiles",
         "Hint": "Choisir le slot de hotbar (1 a 50) pour la macro de toggle des tuiles."
       },
-      "EnableNotesMacro": {
-        "Name": "Activer la macro automatique des notes",
-        "Hint": "Cree ou met a jour automatiquement la macro de notes et l'assigne a la hotbar du GM."
-      },
-      "NotesMacroSlot": {
-        "Name": "Slot hotbar macro notes",
-        "Hint": "Choisir le slot de hotbar (1 a 50) pour la macro de notes."
-      },
       "TokenResize": {
         "Name": "Redimensionnement de token",
         "Hint": "Le portrait conserve le Finder natif. Utilisez le bouton Token sur la fiche pour cadrer et generer le PNG de token."
@@ -73,12 +65,9 @@
       "SocketUnavailable": "Socket Foundry indisponible: diffusion globale non effectuee.",
       "RollFailed": "Impossible de lancer le jet du destin.",
       "GMOnly": "Seul un GM peut modifier la visibilite de toutes les tuiles.",
-      "GMOnlyNotes": "Seul un GM peut ouvrir la fenetre des notes.",
       "NoActiveScene": "Aucune scene active trouvee.",
       "TilesShown": "Toutes les tuiles de la scene sont maintenant visibles.",
-      "TilesHidden": "Toutes les tuiles de la scene sont maintenant cachees.",
-      "NotesSheetUnavailable": "Aucune feuille de notes disponible.",
-      "NotesOpenFailed": "Impossible d'ouvrir la fenetre de notes."
+      "TilesHidden": "Toutes les tuiles de la scene sont maintenant cachees."
     }
   },
   "SMLTME.Time_Format": "Format de l'heure",
